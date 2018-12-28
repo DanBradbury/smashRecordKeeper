@@ -211,11 +211,7 @@
       </datafile>
     </datafiles>
   </datafiles>
-  <NewExtensions>
-    <extension index="0">extensions\GMLive</extension>
-    <extension index="1">extensions\netlog</extension>
-    <extension index="2">extensions\GMLiveHelper</extension>
-  </NewExtensions>
+  <NewExtensions/>
   <sounds name="sound"/>
   <sprites name="sprites">
     <sprite>sprites\spr_portraits</sprite>
@@ -232,7 +228,6 @@
     <font>fonts\font_default</font>
   </fonts>
   <objects name="objects">
-    <object>objects\obj_gmlive</object>
     <object>objects\obj_overlay</object>
     <object>objects\obj_character_select</object>
     <object>objects\obj_picture_character_select</object>
