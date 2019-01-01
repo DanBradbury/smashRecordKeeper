@@ -268,8 +268,8 @@ if(ds_list_size(session_records) &gt; 0) {
     }
     if(matchup_count &gt; 0) {
       draw_set_color(c_white);
-      draw_line_width(0,final_y,room_width/2-200, final_y, 3);
-      draw_text(0, final_y, "Matchup Records:");
+      draw_line_width(0,final_y,room_width/2-300, final_y, 3);
+      draw_text(0, final_y, "Matchups:");
     }
 }
 /*if(array_length_1d(t[3]) &gt; 0) {*/
