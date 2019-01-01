@@ -1,6 +1,6 @@
 ## Smash Record Keeper
 Simple application to be used while streaming Smash Ultimate.
-![](https://i.imgur.com/AuJu9MC.gif)
+![](https://i.imgur.com/FvJAlmM.gif)
 
 ### Keyboard Shortcuts
 ```

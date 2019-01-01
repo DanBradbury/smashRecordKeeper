@@ -25,21 +25,12 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/*character_list = pack("mario", "dk", "wario");*/
-character_list = make_character_list();
-/*selections = array_create(array_length_1d(character_list));*/
-selections = array_create(ds_list_size(character_list));
+            <string>//TODO: should be the full list..add another script to make it happen
 
-/*for(var i=0;i&lt;array_length_1d(character_list);i++) {*/
-for(var i=0;i&lt;ds_list_size(character_list);i++) {
-    selections[i] = 0;
-}
-offset = 0;
-scroll_downs = 0;
-
-
-
-</string>
+character_list = obj_overlay.character_list;
+character_count = ds_list_size(character_list);
+selected_item = array_create(character_count);
+win = false;</string>
           </argument>
         </arguments>
       </action>
@@ -61,40 +52,45 @@ scroll_downs = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if(mouse_wheel_down()) {
-  scroll_downs += 1;
-  offset -= 30;
-}
-
-/*if(mouse_wheel_up()) {*/
-/*}*/
-
-if(keyboard_check_pressed(vk_escape)) {
+            <string>if(keyboard_check_pressed(vk_escape)) {
   instance_destroy();
 }
-/*for(var i=0;i&lt;array_length_1d(character_list);i++) {*/
-for(var i=0;i&lt;ds_list_size(character_list);i++) {
-  var b_left = room_width/2;
-  var b_top = 10+(i*40)
-  var b_right = b_left+150;
-  var b_bot = b_top+30;
-  /*var b_top = 10+(i*40)+offset*/
-  /*var b_bot = b_top+30+offset;*/
 
-  if(mouse_x &gt; b_left &amp;&amp; mouse_x &lt; b_right &amp;&amp;
-        mouse_y &gt; b_top &amp;&amp; mouse_y &lt; b_bot)
-  {
-    selections[i+scroll_downs] = 1;
+for(var i=0;i&lt;character_count-1;i++) {
+  sprite_x = 0+((i)*43);
+  sprite_y = room_height-300;
+  if(i&gt;=66) {
+    sprite_x = 0+((i-66)*43);
+    sprite_y += 75;
+  } else if(i&gt;=44) {
+    sprite_x = 0+((i-44)*43);
+    sprite_y += 50;
+  } else if(i&gt;=22) {
+    sprite_x = 0+((i-22)*43);
+    sprite_y += 25;
+  }
+
+  if(mouse_x &gt;= sprite_x &amp;&amp; mouse_x &lt;= 43+sprite_x &amp;&amp; mouse_y &gt;= sprite_y &amp;&amp; mouse_y &lt;= sprite_y+24) {
+    selected_item[i] = 1;
     if(mouse_check_button_pressed(mb_left)) {
-      /*var a = add_character_to_list(character_list[i], i);*/
-      var a = add_character_to_list(ds_list_find_value(character_list, i));
+      /*var a = add_character_to_list(ds_list_find_value(character_list, i));*/
+      if(win) {
+        var a = add_win_to_matchup(ds_list_find_value(character_list, i));
+      } else {
+        var a = add_loss_to_matchup(ds_list_find_value(character_list, i));
+      }
       instance_destroy();
     }
-
   } else {
-    selections[i+scroll_downs] = 0;
+    selected_item[i] = 0;
   }
-}</string>
+}
+
+
+
+
+
+</string>
           </argument>
         </arguments>
       </action>
@@ -116,23 +112,34 @@ for(var i=0;i&lt;ds_list_size(character_list);i++) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/*for(var i=0;i&lt;array_length_1d(character_list);i++) {*/
-for(var i=0;i&lt;ds_list_size(character_list);i++) {
-  /*var char_name = character_list[i];*/
-  var char_name = ds_list_find_value(character_list, i);
-  draw_set_color(c_white);
-  var b_left = room_width/2;
-  var b_top = 10+(i*40)+offset
-  var b_right = b_left+150;
-  var b_bot = b_top+30+offset;
+            <string>draw_set_color(c_black);
+draw_rectangle(0,0,room_width,room_height, false);
 
-  draw_rectangle(b_left, b_top, b_right, b_bot, true);
-  draw_set_color(c_red);
-  if(selections[i] == 1) {
-    draw_set_color(c_green);
+for(var i=0;i&lt;character_count-1;i++) {
+  sprite_x = 0+((i)*43);
+  sprite_y = room_height-300;
+  if(i&gt;=66) {
+    sprite_x = 0+((i-66)*43);
+    sprite_y += 75;
+  } else if(i&gt;=44) {
+    sprite_x = 0+((i-44)*43);
+    sprite_y += 50;
+  } else if(i&gt;=22) {
+    sprite_x = 0+((i-22)*43);
+    sprite_y += 25;
   }
-  draw_text(b_left, b_top, char_name);
-}</string>
+  draw_sprite(spr_portraits, determine_sprite_index(ds_list_find_value(character_list, i)), sprite_x, sprite_y);
+  if(selected_item[i] == 1) {
+    draw_set_color(c_red);
+    draw_rectangle(sprite_x, sprite_y, sprite_x+43, sprite_y+24, true);
+  }
+}
+
+
+
+
+
+</string>
           </argument>
         </arguments>
       </action>

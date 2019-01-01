@@ -108,19 +108,15 @@ ds_list_add(character_list,
 event_triggered = false;
 event_name = "none";
 current_character = 0;
-/*characters = pack("Mario", "DK", "Jiggly", "Wii Fit", "Duck hunt");*/
-/*characters = pack("Mario");*/
+// TODO: dont need to default to mario.. makes it a bit confusing to magically have this done inline when im sure its scripted elsewhere
 characters = ds_list_create();
-ds_list_add(characters, "Mario");
-/*num_characters = array_length_1d(characters);*/
+/*ds_list_add(characters, "Mario");*/
 num_characters = ds_list_size(characters);
 
-/*session_records = array_create(num_characters);*/
 session_records = ds_list_create();
-for(var i=0;i&lt;num_characters;i++) {
-    /*session_records[i] = pack(0,0, i);*/
-    ds_list_add(session_records, pack(0,0, i));
-}</string>
+
+// TODO: make this a settable default (add multiple characters to start off with always)
+add_character_to_list("Mario");</string>
           </argument>
         </arguments>
       </action>
@@ -142,16 +138,13 @@ for(var i=0;i&lt;num_characters;i++) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/*var t = session_records[current_character];*/
-var t = ds_list_find_value(session_records, current_character);
+            <string>var t = ds_list_find_value(session_records, current_character);
 switch(event_name){
   case 'win':
-    /*session_records[current_character] = pack(t[0]+1, t[1], t[2]);*/
-    ds_list_replace(session_records, current_character, pack(t[0]+1, t[1], t[2]));
+    ds_list_replace(session_records, current_character, pack(t[0]+1, t[1], t[2], t[3]));
     break;
   case 'loss':
-    /*session_records[current_character] = pack(t[0], t[1]+1, t[2]);*/
-    ds_list_replace(session_records, current_character, pack(t[0], t[1]+1, t[2]));
+    ds_list_replace(session_records, current_character, pack(t[0], t[1]+1, t[2], t[3]));
     break;
 
 }
@@ -177,13 +170,18 @@ event_triggered = false;</string>
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (live_call()) return live_result;
-if(!event_triggered &amp;&amp; keyboard_check_released(vk_up)) {
+            <string>if(!event_triggered &amp;&amp; keyboard_check_released(vk_up)) {
+  var t = instance_create(0, 0, obj_track_win);
+  t.win = true;
+
   event_name = 'win';
   event_triggered = true;
   alarm[0] = 2;
 }
 if(!event_triggered &amp;&amp; keyboard_check_released(vk_down)) {
+  // will track as a win.. TODO rename this please..
+  var t = instance_create(0, 0, obj_track_win);
+
   event_name = 'loss';
   event_triggered = true;
   alarm[0] = 2;
@@ -215,7 +213,6 @@ if(keyboard_check_released(ord('R'))) {
 }
 
 if(!instance_exists(obj_character_select) &amp;&amp; !event_triggered &amp;&amp; keyboard_check_released(ord('A'))) {
-  /*instance_create(0,0, obj_character_select);*/
   instance_create(0,0, obj_picture_character_select);
 }</string>
           </argument>
@@ -239,19 +236,54 @@ if(!instance_exists(obj_character_select) &amp;&amp; !event_triggered &amp;&amp;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if (live_call()) return live_result;
-draw_set_font(font_default);
+            <string>draw_set_font(font_default);
 for(var i=0;i&lt;num_characters;i++) {
-  /*var t = session_records[i];*/
   var t = ds_list_find_value(session_records, i);
   draw_sprite(spr_portraits, t[2], 10,10+(50*i));
   draw_set_color(c_red);
   draw_text(60,3+(50*i),string(t[0])+" - "+string(t[1]));
   if(i==current_character) {
     draw_set_color(c_yellow);
-    draw_circle(3,15+(50*i), 3, false);
+    draw_circle(3,17+(50*i), 2, false);
   }
-}</string>
+}
+
+// should not display anything right now?
+if(ds_list_size(session_records) &gt; 0) {
+    var tt = ds_list_find_value(session_records, current_character);
+    var matchups_array = tt[3];
+    // draw all matchups that we've played..
+    var matchup_count = 0;
+    var final_y = 5+(num_characters*50)
+    
+    for(var i = 0; i&lt;array_length_1d(matchups_array); i++) {
+      var q = matchups_array[i];
+      if(q[0] &gt; 0 || q[1] &gt; 0) {
+        var portrait_y = final_y+45+(matchup_count*50)
+        draw_sprite(spr_portraits, i, 10, portrait_y);
+        draw_set_color(c_red);
+        draw_text(60, portrait_y-7, string(q[0])+" - "+string(q[1]));
+        matchup_count++;
+      }
+    }
+    if(matchup_count &gt; 0) {
+      draw_set_color(c_white);
+      draw_line_width(0,final_y,room_width/2-200, final_y, 3);
+      draw_text(0, final_y, "Matchup Records:");
+    }
+}
+/*if(array_length_1d(t[3]) &gt; 0) {*/
+  /*final_y = 5+(num_characters*50)*/
+  /*draw_set_color(c_white);*/
+  /*draw_line_width(0,final_y,room_width/2, final_y, 3);*/
+  /*draw_text(0, final_y, "Matchup Records:");*/
+  /*// actually do the lookup here when it counts*/
+  /*portrait_y = final_y+40;*/
+  /*draw_sprite(spr_portraits, 12, 10, portrait_y);*/
+  /*draw_set_color(c_red);*/
+  /*draw_text(60, portrait_y-7, "1 - 0");*/
+/*}*/
+</string>
           </argument>
         </arguments>
       </action>
