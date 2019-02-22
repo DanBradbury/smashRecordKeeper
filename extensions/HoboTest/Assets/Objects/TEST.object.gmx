@@ -3,7 +3,7 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>0</depth>
+  <depth>-5000</depth>
   <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
@@ -25,19 +25,13 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// INFO: actually used to track wins &amp; losses
-//  - using the total list of characters to get ready to draw/handle hover logic
-character_list = obj_overlay.character_list;
-character_count = ds_list_size(character_list);
-selected_item = array_create(character_count);
-win = false;
-
+            <string>hobo_init();
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="3" enumb="0">
+    <event eventtype="2" enumb="2">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -54,42 +48,63 @@ win = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// INFO: way to get out
-if(keyboard_check_pressed(vk_escape)) {
-  instance_destroy();
-}
-
-// INFO: check to see if mouse_x/y is within the bounds of a sprite to determine what we are hovering
-for(var i=0;i&lt;character_count;i++) {
-  sprite_x = 0+((i)*43);
-  sprite_y = room_height-300;
-  if(i&gt;=66) {
-    sprite_x = 0+((i-66)*43);
-    sprite_y += 75;
-  } else if(i&gt;=44) {
-    sprite_x = 0+((i-44)*43);
-    sprite_y += 50;
-  } else if(i&gt;=22) {
-    sprite_x = 0+((i-22)*43);
-    sprite_y += 25;
+            <string>trigger_test(current_test);
+run_hobo_tests();
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>run_custom_action();
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="2" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>//tests have been completed
+test_plan = "1.."+string(test_count);
+if(fail_count==0)
+  {
+  test_results = "#All tests passed!";
   }
-
-  if(mouse_x &gt;= sprite_x &amp;&amp; mouse_x &lt;= 43+sprite_x &amp;&amp; mouse_y &gt;= sprite_y &amp;&amp; mouse_y &lt;= sprite_y+24) {
-    selected_item[i] = 1;
-    if(mouse_check_button_pressed(mb_left)) {
-      /*var a = add_character_to_list(ds_list_find_value(character_list, i));*/
-      if(win) {
-        var a = add_win_to_matchup(ds_list_find_value(character_list, i));
-      } else {
-        var a = add_loss_to_matchup(ds_list_find_value(character_list, i));
-      }
-      instance_destroy();
-    }
-  } else {
-    selected_item[i] = 0;
+else
+  {
+  test_results += "#Failed "+string(fail_count)+"/"+string(test_count)+" tests, "+string((test_count-fail_count) / test_count * 100)+"% okay";
   }
-}
-
 </string>
           </argument>
         </arguments>
@@ -112,31 +127,7 @@ for(var i=0;i&lt;character_count;i++) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>// INFO: same trick used in character_select to black out the screen
-draw_set_color(c_black);
-draw_rectangle(0,0,room_width,room_height, false);
-
-// INFO: draw the sprites w/ row logic + hover handling
-for(var i=0;i&lt;character_count;i++) {
-  sprite_x = 0+((i)*43);
-  sprite_y = room_height-300;
-  if(i&gt;=66) {
-    sprite_x = 0+((i-66)*43);
-    sprite_y += 75;
-  } else if(i&gt;=44) {
-    sprite_x = 0+((i-44)*43);
-    sprite_y += 50;
-  } else if(i&gt;=22) {
-    sprite_x = 0+((i-22)*43);
-    sprite_y += 25;
-  }
-  draw_sprite(spr_portraits, determine_sprite_index(ds_list_find_value(character_list, i)), sprite_x, sprite_y);
-  if(selected_item[i] == 1) {
-    draw_set_color(c_red);
-    draw_rectangle(sprite_x, sprite_y, sprite_x+43, sprite_y+24, true);
-  }
-}
-
+            <string>draw_test();
 </string>
           </argument>
         </arguments>

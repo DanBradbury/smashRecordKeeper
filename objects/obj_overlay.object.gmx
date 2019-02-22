@@ -25,8 +25,11 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>character_list = ds_list_create();
-/*ds_list_add(character_list, "Mario", "DK", "Jiggly", "Wii Fit", "Duck hunt", "Mega Man", "Fox", "Robin");*/
+            <string>// INFO: 
+//      character_list - list of all available characters
+//      characters     - current list of selected characters with session_records
+//      num_characters - helper to determine how many characters are in current list
+character_list = ds_list_create();
 ds_list_add(character_list,
   "Bayonetta",
   "Bowser",
@@ -108,15 +111,14 @@ ds_list_add(character_list,
 event_triggered = false;
 event_name = "none";
 current_character = 0;
-// TODO: dont need to default to mario.. makes it a bit confusing to magically have this done inline when im sure its scripted elsewhere
 characters = ds_list_create();
-/*ds_list_add(characters, "Mario");*/
 num_characters = ds_list_size(characters);
 
 session_records = ds_list_create();
 
-// TODO: make this a settable default (add multiple characters to start off with always)
-add_character_to_list("Mario");</string>
+clean_matchup_records = fresh_matchup_records();
+
+</string>
           </argument>
         </arguments>
       </action>
@@ -138,7 +140,9 @@ add_character_to_list("Mario");</string>
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>var t = ds_list_find_value(session_records, current_character);
+            <string>// INFO: 
+//         THOUGHT: this is an event handler to make sure we dont double track wins/losses
+var t = ds_list_find_value(session_records, current_character);
 switch(event_name){
   case 'win':
     ds_list_replace(session_records, current_character, pack(t[0]+1, t[1], t[2], t[3]));
@@ -148,7 +152,9 @@ switch(event_name){
     break;
 
 }
-event_triggered = false;</string>
+event_triggered = false;
+
+</string>
           </argument>
         </arguments>
       </action>
@@ -170,7 +176,8 @@ event_triggered = false;</string>
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>if(!event_triggered &amp;&amp; keyboard_check_released(vk_up)) {
+            <string>// INFO: tracking a win
+if(!event_triggered &amp;&amp; keyboard_check_released(vk_up)) {
   var t = instance_create(0, 0, obj_track_win);
   t.win = true;
 
@@ -178,8 +185,9 @@ event_triggered = false;</string>
   event_triggered = true;
   alarm[0] = 2;
 }
+
+// INFO: tracking a loss
 if(!event_triggered &amp;&amp; keyboard_check_released(vk_down)) {
-  // will track as a win.. TODO rename this please..
   var t = instance_create(0, 0, obj_track_win);
 
   event_name = 'loss';
@@ -187,8 +195,8 @@ if(!event_triggered &amp;&amp; keyboard_check_released(vk_down)) {
   alarm[0] = 2;
 }
 
+// INFO: switching characters
 if(!event_triggered &amp;&amp; keyboard_check_released(vk_right)) {
-  //scr_change_character
   if(current_character+1 &gt;= num_characters) {
     current_character = 0;
   } else {
@@ -196,25 +204,29 @@ if(!event_triggered &amp;&amp; keyboard_check_released(vk_right)) {
   }
 }
 
+// INFO: switching characters
 if(!event_triggered &amp;&amp; keyboard_check_released(vk_left)) {
-  //scr_change_character
   if(current_character-1 &lt; 0) {
     current_character = num_characters-1;
   } else {
     current_character -= 1;
   }
 }
+
+// INFO: remove current character from list
 if(keyboard_check_released(ord('R'))) {
-  //remove current character
   ds_list_delete(characters, current_character);
   ds_list_delete(session_records, current_character);
   num_characters--;
   current_character = 0;
 }
 
-if(!instance_exists(obj_character_select) &amp;&amp; !event_triggered &amp;&amp; keyboard_check_released(ord('A'))) {
+// INFO: adding a new character with obj_picture_character_select
+if(!instance_exists(obj_picture_character_select) &amp;&amp; !event_triggered &amp;&amp; keyboard_check_released(ord('A'))) {
   instance_create(0,0, obj_picture_character_select);
-}</string>
+}
+
+</string>
           </argument>
         </arguments>
       </action>
@@ -237,6 +249,11 @@ if(!instance_exists(obj_character_select) &amp;&amp; !event_triggered &amp;&amp;
           <argument>
             <kind>1</kind>
             <string>draw_set_font(font_default);
+
+// INFO: iterate over the currently selected characters
+//      1. find the session information
+//      2. draw appropriate sprite + record info
+//      * will draw a small yellow circle to mark who's activated
 for(var i=0;i&lt;num_characters;i++) {
   var t = ds_list_find_value(session_records, i);
   draw_sprite(spr_portraits, t[2], 10,10+(50*i));
@@ -248,7 +265,9 @@ for(var i=0;i&lt;num_characters;i++) {
   }
 }
 
-// should not display anything right now?
+// INFO: draws the current characters session_records
+//      1. ensure that we have a list of sessions
+//      2. draw the matchups that we've played
 if(ds_list_size(session_records) &gt; 0) {
     var tt = ds_list_find_value(session_records, current_character);
     var matchups_array = tt[3];
@@ -272,17 +291,7 @@ if(ds_list_size(session_records) &gt; 0) {
       draw_text(0, final_y, "Matchups:");
     }
 }
-/*if(array_length_1d(t[3]) &gt; 0) {*/
-  /*final_y = 5+(num_characters*50)*/
-  /*draw_set_color(c_white);*/
-  /*draw_line_width(0,final_y,room_width/2, final_y, 3);*/
-  /*draw_text(0, final_y, "Matchup Records:");*/
-  /*// actually do the lookup here when it counts*/
-  /*portrait_y = final_y+40;*/
-  /*draw_sprite(spr_portraits, 12, 10, portrait_y);*/
-  /*draw_set_color(c_red);*/
-  /*draw_text(60, portrait_y-7, "1 - 0");*/
-/*}*/
+
 </string>
           </argument>
         </arguments>

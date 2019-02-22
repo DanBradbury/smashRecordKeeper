@@ -1,4 +1,7 @@
 ///add_loss_to_matchup(ARG_INFO)
+// INFO: same idea as add_win_to_matchup
+//      - needs to incrememnt the loss element in the array
+//      - then ds_list_replaces with new values
 with(obj_overlay) {
   var spr_index = determine_sprite_index(argument0);
   var t = ds_list_find_value(session_records, current_character);

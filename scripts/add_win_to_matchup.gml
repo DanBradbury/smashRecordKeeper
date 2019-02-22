@@ -1,4 +1,8 @@
 ///add_win_to_matchup(ARG_INFO)
+// INFO: using obj_overlay
+//       1. grab the active session_record (for current character)
+//       2. update the session record to increment the wins
+// XXX: ds_list_replace was used since we couldnt just increment the item in the array
 with(obj_overlay) {
   var spr_index = determine_sprite_index(argument0);
   var t = ds_list_find_value(session_records, current_character);

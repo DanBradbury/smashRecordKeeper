@@ -1,4 +1,6 @@
 ///make_character_list(ARG_INFO)
+// INFO: takes the list of all_characters + what you've selected
+// will return a list of all characters that are not already in the characters list
 var all_characters = obj_overlay.character_list;
 var displayed_characters = obj_overlay.characters;
 

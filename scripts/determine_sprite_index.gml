@@ -1,6 +1,5 @@
 ///determine_sprite_index(ARG_INFO)
-/*
-*/
+// INFO: simple lookup to determine what sprite to draw for the given character name
 var character_name = argument0;
 
 if(character_name == 'Mario') {
